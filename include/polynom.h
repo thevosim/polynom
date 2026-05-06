@@ -1,33 +1,42 @@
-#include "forward_list.h"
-struct Monom
-{
-    double coef_;
-    int deg_;
-    Monom operator+(Monom m)
-    {
-        Monom res;
-        if(deg_ == m.deg_)
-        {
-            res.coef_ = coef_ + m.coef_;
-            res.deg_ = deg_;
-        }
-        return res;   
-    }
+#ifndef POLYNOM_H
+#define POLYNOM_H
 
-    Monom operator-(Monom m)
-    {
-        Monom res;
-        if(deg_ == m.deg_)
-        {
-            res.coef_ = coef_ - m.coef_;
-            res.deg_ = deg_;
-        }
-        return res;   
+#include "forward_list.h"
+#include <string>
+#include <cstdint>
+
+constexpr uint32_t MASK = 1023;
+struct Monom 
+{
+    double coeff;
+    uint32_t deg;
+
+    Monom operator*(const Monom& other) const 
+    { 
+        uint32_t d = ((((deg >> 20) + (other.deg >> 20)) & MASK) << 20) |
+                    ((((deg >> 10) + (other.deg >> 10)) & MASK) << 10) |
+                    (((deg + other.deg) & MASK));
+        return {coeff * other.coeff, d}; 
     }
 };
 
 class Polynom
 {
-    ForwardList<Monom> p;
+private:
+    ForwardList<Monom> data;
+    void add_to_tail(double c, uint32_t d, ForwardList<Monom>::Iterator& last);
+
+public:
+    Polynom() {}
+    Polynom(const std::string& expr);
+
+    Polynom operator+(const Polynom& other) const;
+    Polynom operator-(const Polynom& other) const;
+    Polynom operator*(const Polynom& other) const;
+    Polynom operator*(double с) const;
     
+    double evaluate(double x, double y, double z) const;
+    void print() const;
 };
+
+#endif

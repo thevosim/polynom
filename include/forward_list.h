@@ -1,6 +1,6 @@
 #ifndef FORWARD_LIST_H
 #define FORWARD_LIST_H
-
+#include <cstddef>
 template<class T>
 class ForwardList
 {
@@ -29,7 +29,7 @@ class ForwardList
     }
 public:
 	ForwardList(){}
-	ForwardList(size_t n, T def)
+	ForwardList(std::size_t n, T def)
 	{
 		if(n == 0) return;
 		first = new Node(def);
@@ -162,11 +162,12 @@ public:
 			return *this;
 		}
 		T operator*() {return m_it->m_data;}
+		T* operator->() {return &(m_it->m_data); }
 		bool operator!=(Iterator it) {return m_it != it;}
 		bool operator!() {return m_it == nullptr;}
 	};
-	Iterator begin() {return first;}
-	Iterator end() {return nullptr;}
+	Iterator begin() const {return first;}
+	Iterator end() const {return nullptr;}
 
 	ForwardList multiply(int n) 
 	{
@@ -201,6 +202,49 @@ public:
 			if (curr) curr = curr->m_next;
     	}
 		first = reverse(first);
+		return result;
+	}
+	void sort() 
+	{
+		if (!first || !first->m_next) return;
+		first = sort(first);
+	}
+
+private:
+	Node* sort(Node* start) 
+	{
+		if (!start || !start->m_next) return start;
+		
+		Node* slow = start;
+		Node* fast = start->m_next;
+		while (fast && fast->m_next) 
+		{
+			slow = slow->m_next;
+			fast = fast->m_next->m_next;
+		}
+		
+		Node* mid = slow->m_next;
+		slow->m_next = nullptr;
+		
+		return merge(sort(start), sort(mid));
+	}
+
+	Node* merge(Node* a, Node* b) 
+	{
+		if (!a) return b;
+		if (!b) return a;
+		
+		Node* result = nullptr;
+		if (a->m_data.deg >= b->m_data.deg) 
+		{
+			result = a;
+			result->m_next = merge(a->m_next, b);
+		}
+		else 
+		{
+			result = b;
+			result->m_next = merge(a, b->m_next);
+		}
 		return result;
 	}
 };
