@@ -1,29 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
+cmake_policy(SET CMP0135 NEW)
+project(polynom)
 
-set(PROJECT_NAME set) # change accordingly
-project(${PROJECT_NAME})
+set(CMAKE_CXX_STANDARD 17)
 
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+)
+FetchContent_MakeAvailable(googletest)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE})
-
-set(LIBRARY "${PROJECT_NAME}")
-set(TESTS   "test_${PROJECT_NAME}")
-set(INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
-include_directories("${INCLUDE}" gtest)
-
-# BUILD
 add_subdirectory(src)
-add_subdirectory(gtest)
 add_subdirectory(test)
-
-# REPORT
-message( STATUS "")
-message( STATUS "General configuration for ${PROJECT_NAME}")
-message( STATUS "======================================")
-message( STATUS "")
-message( STATUS "   Configuration: ${CMAKE_BUILD_TYPE}")
-message( STATUS "")

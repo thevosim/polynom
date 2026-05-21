@@ -1,7 +1,4 @@
-set(target ${LIBRARY})
 
-file(GLOB hdrs "*.h*" "${MP2_INCLUDE}/*.h*")
-file(GLOB srcs "*.cpp")
+add_library(poly_lib polynom.cpp)
 
-add_library(${target} STATIC ${srcs} ${hdrs})
-target_link_libraries(${target} ${LIBRARY_DEPS})
+target_include_directories(poly_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")
